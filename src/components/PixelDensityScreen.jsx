@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { ArrowLeft, Plus, Minus, Info, X } from 'lucide-react'
 
 export default function PixelDensityScreen({ image, segments: initialSegments, onBack, onGenerate }) {
@@ -7,16 +7,13 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
   )
   const [showInfo, setShowInfo] = useState(true)
   const [selectedSegment, setSelectedSegment] = useState(null)
+  const [zoom, setZoom] = useState(1)
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const [isPanning, setIsPanning] = useState(false)
+  const [lastPanPoint, setLastPanPoint] = useState({ x: 0, y: 0 })
+  const canvasRef = useRef(null)
 
   const handleIncrease = () => {
-    if (selectedSegment !== null) {
-      setSegments(segments.map((seg, i) => 
-        i === selectedSegment ? { ...seg, density: Math.min(seg.density + 2, 30) } : seg
-      ))
-    }
-  }
-
-  const handleDecrease = () => {
     if (selectedSegment !== null) {
       setSegments(segments.map((seg, i) => 
         i === selectedSegment ? { ...seg, density: Math.max(seg.density - 2, 4) } : seg
@@ -24,8 +21,43 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
     }
   }
 
+  const handleDecrease = () => {
+    if (selectedSegment !== null) {
+      setSegments(segments.map((seg, i) => 
+        i === selectedSegment ? { ...seg, density: Math.min(seg.density + 2, 30) } : seg
+      ))
+    }
+  }
+
   const handleSegmentClick = (index) => {
     setSelectedSegment(index)
+  }
+
+  const handleWheel = (e) => {
+    e.preventDefault()
+    const delta = e.deltaY > 0 ? 0.9 : 1.1
+    const newZoom = Math.min(Math.max(zoom * delta, 0.5), 3)
+    setZoom(newZoom)
+  }
+
+  const handleMouseDown = (e) => {
+    if (e.button === 1 || e.button === 0) {
+      setIsPanning(true)
+      setLastPanPoint({ x: e.clientX, y: e.clientY })
+    }
+  }
+
+  const handleMouseMove = (e) => {
+    if (isPanning) {
+      const dx = e.clientX - lastPanPoint.x
+      const dy = e.clientY - lastPanPoint.y
+      setPan({ x: pan.x + dx, y: pan.y + dy })
+      setLastPanPoint({ x: e.clientX, y: e.clientY })
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsPanning(false)
   }
 
   const renderDots = (segment) => {
@@ -101,50 +133,66 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
         </button>
       )}
 
-      <div className="flex-1 relative">
+      <div className="flex-1 relative overflow-hidden">
         <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `url(${image})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center'
-          }}
+          ref={canvasRef}
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          className="absolute inset-0 cursor-grab active:cursor-grabbing"
         >
-          <svg className="w-full h-full">
-            {segments.map((segment, index) => {
-              const dots = renderDots(segment)
-              const isSelected = selectedSegment === index
-              return (
-                <g key={segment.id} onClick={() => handleSegmentClick(index)}>
-                  {dots.map((dot, i) => (
-                    <circle
-                      key={i}
-                      cx={dot.x}
-                      cy={dot.y}
-                      r="3"
-                      fill={segment.color}
-                      className="cursor-pointer"
-                      opacity={isSelected ? 1 : 0.6}
-                    />
-                  ))}
-                  {segment.points.map((point, i) => (
-                    <circle
-                      key={`node-${i}`}
-                      cx={point.x}
-                      cy={point.y}
-                      r={isSelected ? 8 : 6}
-                      fill={segment.color}
-                      stroke="white"
-                      strokeWidth="2"
-                      className="cursor-pointer"
-                      opacity={isSelected ? 1 : 0.6}
-                    />
-                  ))}
-                </g>
-              )
-            })}
-          </svg>
+          <div
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: '0 0',
+              width: '100%',
+              height: '100%',
+              backgroundImage: `url(${image})`,
+              backgroundSize: 'contain',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              position: 'absolute',
+              left: `${pan.x}px`,
+              top: `${pan.y}px`
+            }}
+          >
+            <svg className="w-full h-full" style={{ position: 'absolute', top: 0, left: 0 }}>
+              {segments.map((segment, index) => {
+                const dots = renderDots(segment)
+                const isSelected = selectedSegment === index
+                return (
+                  <g key={segment.id} onClick={() => handleSegmentClick(index)}>
+                    {dots.map((dot, i) => (
+                      <circle
+                        key={i}
+                        cx={dot.x}
+                        cy={dot.y}
+                        r={2 / zoom}
+                        fill={segment.color}
+                        className="cursor-pointer"
+                        opacity={isSelected ? 1 : 0.6}
+                      />
+                    ))}
+                    {segment.points.map((point, i) => (
+                      <circle
+                        key={`node-${i}`}
+                        cx={point.x}
+                        cy={point.y}
+                        r={isSelected ? 5 / zoom : 4 / zoom}
+                        fill={segment.color}
+                        stroke="white"
+                        strokeWidth={1.5 / zoom}
+                        className="cursor-pointer"
+                        opacity={isSelected ? 1 : 0.6}
+                      />
+                    ))}
+                  </g>
+                )
+              })}
+            </svg>
+          </div>
         </div>
       </div>
 

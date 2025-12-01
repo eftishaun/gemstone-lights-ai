@@ -176,7 +176,7 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
                     points={segment.points.map(p => `${p.x},${p.y}`).join(' ')}
                     fill="none"
                     stroke={segment.color}
-                    strokeWidth="3"
+                    strokeWidth={2 / zoom}
                     className={deleteMode ? "cursor-pointer" : ""}
                   />
                   {segment.points.map((point, i) => (
@@ -184,10 +184,10 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
                       key={i}
                       cx={point.x}
                       cy={point.y}
-                      r="6"
+                      r={4 / zoom}
                       fill={segment.color}
                       stroke="white"
-                      strokeWidth="2"
+                      strokeWidth={1.5 / zoom}
                       className={deleteMode ? "cursor-pointer" : ""}
                     />
                   ))}
@@ -199,17 +199,17 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
                     points={currentSegment.map(p => `${p.x},${p.y}`).join(' ')}
                     fill="none"
                     stroke={colors[segments.length % colors.length]}
-                    strokeWidth="3"
+                    strokeWidth={2 / zoom}
                   />
                   {currentSegment.map((point, i) => (
                     <circle
                       key={i}
                       cx={point.x}
                       cy={point.y}
-                      r="6"
+                      r={4 / zoom}
                       fill={colors[segments.length % colors.length]}
                       stroke="white"
-                      strokeWidth="2"
+                      strokeWidth={1.5 / zoom}
                     />
                   ))}
                 </g>
