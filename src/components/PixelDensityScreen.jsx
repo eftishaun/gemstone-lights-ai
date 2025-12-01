@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react'
-import { ArrowLeft, Plus, Minus, Info, X } from 'lucide-react'
+import { ArrowLeft, Info, X } from 'lucide-react'
 
 export default function PixelDensityScreen({ image, segments: initialSegments, onBack, onGenerate }) {
   const [segments, setSegments] = useState(
-    initialSegments.map(seg => ({ ...seg, density: 10 }))
+    initialSegments.map(seg => ({ ...seg, density: 7.6 }))
   )
   const [showInfo, setShowInfo] = useState(true)
   const [selectedSegment, setSelectedSegment] = useState(null)
@@ -29,7 +29,8 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
     }
   }
 
-  const handleSegmentClick = (index) => {
+  const handleSegmentClick = (e, index) => {
+    e.stopPropagation()
     setSelectedSegment(index)
   }
 
@@ -91,22 +92,6 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
           </button>
           <h1 className="text-lg font-medium">Pixel Density</h1>
         </div>
-        {selectedSegment !== null && (
-          <div className="flex gap-1.5">
-            <button
-              onClick={handleDecrease}
-              className="w-9 h-8 bg-white text-gray-700 rounded-md flex items-center justify-center"
-            >
-              <Minus className="w-4 h-4" />
-            </button>
-            <button
-              onClick={handleIncrease}
-              className="w-9 h-8 bg-white text-gray-700 rounded-md flex items-center justify-center"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-        )}
       </div>
 
       {showInfo && (
@@ -115,22 +100,38 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
           <p className="text-xs text-gray-600 flex-1">
             Tap each line to change the pixel density. Try to choose a density that looks like 9 inch spacing.
           </p>
-          <button onClick={() => setShowInfo(false)}>
+          <button onClick={() => setShowInfo(false)} className="flex-shrink-0">
             <X className="w-4 h-4 text-gray-600" />
           </button>
         </div>
       )}
 
-      {!showInfo && (
-        <button
-          onClick={() => setShowInfo(true)}
-          className="bg-gray-100 border-b border-gray-300 px-4 py-2.5 flex items-start gap-2 w-full text-left"
-        >
-          <Info className="w-4 h-4 text-gray-600 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-gray-600 flex-1">
-            Tap each line to change the pixel density. Try to choose a density that looks like 9 inch spacing.
-          </p>
-        </button>
+      {selectedSegment !== null && (
+        <div className="px-4 py-3 bg-white border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-gray-600 font-medium">Density:</span>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={Math.round(((30 - (segments[selectedSegment]?.density || 10)) / 28) * 100)}
+              onChange={(e) => {
+                const percentage = parseInt(e.target.value)
+                const newDensity = 30 - (percentage / 100 * 28)
+                setSegments(segments.map((seg, i) => 
+                  i === selectedSegment ? { ...seg, density: newDensity } : seg
+                ))
+              }}
+              className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              style={{
+                background: `linear-gradient(to right, #2B7FB8 0%, #2B7FB8 ${Math.round(((30 - (segments[selectedSegment]?.density || 10)) / 28) * 100)}%, #e5e7eb ${Math.round(((30 - (segments[selectedSegment]?.density || 10)) / 28) * 100)}%, #e5e7eb 100%)`
+              }}
+            />
+            <span className="text-xs text-gray-600 font-medium min-w-[3ch]">
+              {Math.round(((30 - (segments[selectedSegment]?.density || 10)) / 28) * 100)}%
+            </span>
+          </div>
+        </div>
       )}
 
       <div className="flex-1 relative overflow-hidden">
@@ -163,7 +164,7 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
                 const dots = renderDots(segment)
                 const isSelected = selectedSegment === index
                 return (
-                  <g key={segment.id} onClick={() => handleSegmentClick(index)}>
+                  <g key={segment.id} onClick={(e) => handleSegmentClick(e, index)}>
                     {dots.map((dot, i) => (
                       <circle
                         key={i}

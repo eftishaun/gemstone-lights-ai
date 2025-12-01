@@ -14,14 +14,46 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
 
   const colors = ['#22c55e', '#ef4444', '#3b82f6', '#f59e0b', '#8b5cf6']
 
+  const [draggingNode, setDraggingNode] = useState(null)
+
   const handleCanvasClick = (e) => {
-    if (!isDrawing || isPanning) return
+    if (!isDrawing || isPanning || draggingNode) return
     
     const rect = canvasRef.current.getBoundingClientRect()
     const x = (e.clientX - rect.left) / zoom - pan.x / zoom
     const y = (e.clientY - rect.top) / zoom - pan.y / zoom
     
     setCurrentSegment([...currentSegment, { x, y }])
+  }
+
+  const handleNodeMouseDown = (e, segmentIndex, pointIndex) => {
+    e.stopPropagation()
+    if (isDrawing || deleteMode) return
+    setDraggingNode({ segmentIndex, pointIndex })
+  }
+
+  const handleNodeDrag = (e) => {
+    if (!draggingNode) return
+    
+    const rect = canvasRef.current.getBoundingClientRect()
+    const x = (e.clientX - rect.left) / zoom - pan.x / zoom
+    const y = (e.clientY - rect.top) / zoom - pan.y / zoom
+    
+    setSegments(segments.map((seg, segIdx) => {
+      if (segIdx === draggingNode.segmentIndex) {
+        return {
+          ...seg,
+          points: seg.points.map((p, pIdx) => 
+            pIdx === draggingNode.pointIndex ? { x, y } : p
+          )
+        }
+      }
+      return seg
+    }))
+  }
+
+  const handleNodeMouseUp = () => {
+    setDraggingNode(null)
   }
 
   const handleWheel = (e) => {
@@ -32,6 +64,7 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
   }
 
   const handleMouseDown = (e) => {
+    if (draggingNode) return
     if (e.button === 1 || (e.button === 0 && !isDrawing)) {
       setIsPanning(true)
       setLastPanPoint({ x: e.clientX, y: e.clientY })
@@ -39,6 +72,10 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
   }
 
   const handleMouseMove = (e) => {
+    if (draggingNode) {
+      handleNodeDrag(e)
+      return
+    }
     if (isPanning) {
       const dx = e.clientX - lastPanPoint.x
       const dy = e.clientY - lastPanPoint.y
@@ -49,6 +86,7 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
 
   const handleMouseUp = () => {
     setIsPanning(false)
+    handleNodeMouseUp()
   }
 
   const handleAddSegment = () => {
@@ -188,7 +226,8 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
                       fill={segment.color}
                       stroke="white"
                       strokeWidth={1.5 / zoom}
-                      className={deleteMode ? "cursor-pointer" : ""}
+                      className={deleteMode ? "cursor-pointer" : "cursor-move"}
+                      onMouseDown={(e) => handleNodeMouseDown(e, segmentIndex, i)}
                     />
                   ))}
                 </g>
