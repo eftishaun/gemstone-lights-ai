@@ -6,12 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:github": "GITHUB_PAGES=true vite build",
-    "preview": "vite preview",
-    "predeploy": "npm run build:github",
-    "deploy": "gh-pages -d dist"
+    "preview": "vite preview"
   },
-  "homepage": "https://yourusername.github.io/gemstone-lights-ai",
+
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -20,7 +17,6 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.0",
     "autoprefixer": "^10.4.16",
-    "gh-pages": "^6.1.0",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.3.6",
     "vite": "^5.0.7"
