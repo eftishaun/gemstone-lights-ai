@@ -27,7 +27,7 @@ export default function HomeScreen({ onUpload, history, generating, onNewProject
 
   return (
     <div className="h-full flex flex-col bg-gray-50">
-      <div className="bg-[#2B7FB8] text-white px-4 py-3 flex items-center justify-between">
+      <div className="bg-[#237BC0] text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ArrowLeft className="w-5 h-5" />
           <h1 className="text-lg font-medium">Gemstone Lights AI</h1>
@@ -48,7 +48,7 @@ export default function HomeScreen({ onUpload, history, generating, onNewProject
       <div className="flex-1 overflow-y-auto pb-24">
         {!hasContent ? (
           <div className="flex flex-col items-center justify-center h-full px-8">
-            <div className="w-16 h-16 bg-[#2B7FB8] rounded-full flex items-center justify-center mb-5">
+            <div className="w-16 h-16 bg-[#237BC0] rounded-full flex items-center justify-center mb-5">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-lg font-bold text-gray-900 mb-2 text-center">
@@ -64,7 +64,7 @@ export default function HomeScreen({ onUpload, history, generating, onNewProject
               <div className="bg-white rounded-lg p-3 mb-4 flex gap-3">
                 <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center relative">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-8 h-8 border-2 border-[#2B7FB8] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-8 h-8 border-2 border-[#237BC0] border-t-transparent rounded-full animate-spin" />
                   </div>
                 </div>
                 <div className="flex-1">
@@ -118,7 +118,7 @@ export default function HomeScreen({ onUpload, history, generating, onNewProject
             onChange={handleFileUpload}
             className="hidden"
           />
-          <div className="bg-[#2B7FB8] text-white py-3 rounded-lg text-center text-sm font-medium cursor-pointer hover:bg-[#236a9f] transition-colors">
+          <div className="bg-[#237BC0] text-white py-3 rounded-lg text-center text-sm font-medium cursor-pointer hover:bg-[#236a9f] transition-colors">
             Upload a Photo
           </div>
         </label>
@@ -127,7 +127,7 @@ export default function HomeScreen({ onUpload, history, generating, onNewProject
       {/* Full Screen Image Modal */}
       {selectedImage && (
         <div className="absolute inset-0 bg-black z-50 flex flex-col">
-          <div className="bg-[#2B7FB8] text-white px-4 py-3 flex items-center justify-between">
+          <div className="bg-[#237BC0] text-white px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <button onClick={() => setSelectedImage(null)}>
                 <ArrowLeft className="w-5 h-5" />

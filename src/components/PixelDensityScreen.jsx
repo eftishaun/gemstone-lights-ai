@@ -85,7 +85,7 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
 
   return (
     <div className="h-full flex flex-col bg-gray-50">
-      <div className="bg-[#2B7FB8] text-white px-4 py-3 flex items-center justify-between">
+      <div className="bg-[#237BC0] text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button onClick={onBack}>
             <ArrowLeft className="w-5 h-5" />
@@ -94,20 +94,8 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
         </div>
       </div>
 
-      {showInfo && (
-        <div className="bg-gray-100 border-b border-gray-300 px-4 py-2.5 flex items-start gap-2">
-          <Info className="w-4 h-4 text-gray-600 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-gray-600 flex-1">
-            Tap each line to change the pixel density. Try to choose a density that looks like 9 inch spacing.
-          </p>
-          <button onClick={() => setShowInfo(false)} className="flex-shrink-0">
-            <X className="w-4 h-4 text-gray-600" />
-          </button>
-        </div>
-      )}
-
-      {selectedSegment !== null && (
-        <div className="px-4 py-3 bg-white border-b border-gray-200">
+      <div className="px-4 py-3 bg-white border-b border-gray-200" style={{ minHeight: '60px' }}>
+        {selectedSegment !== null ? (
           <div className="flex items-center gap-3">
             <span className="text-xs text-gray-600 font-medium">Density:</span>
             <input
@@ -124,13 +112,29 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
               }}
               className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
               style={{
-                background: `linear-gradient(to right, #2B7FB8 0%, #2B7FB8 ${Math.round(((30 - (segments[selectedSegment]?.density || 10)) / 28) * 100)}%, #e5e7eb ${Math.round(((30 - (segments[selectedSegment]?.density || 10)) / 28) * 100)}%, #e5e7eb 100%)`
+                background: `linear-gradient(to right, #237BC0 0%, #237BC0 ${Math.round(((30 - (segments[selectedSegment]?.density || 10)) / 28) * 100)}%, #e5e7eb ${Math.round(((30 - (segments[selectedSegment]?.density || 10)) / 28) * 100)}%, #e5e7eb 100%)`
               }}
             />
             <span className="text-xs text-gray-600 font-medium min-w-[3ch]">
               {Math.round(((30 - (segments[selectedSegment]?.density || 10)) / 28) * 100)}%
             </span>
           </div>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-xs text-gray-400">Select a line to adjust density</p>
+          </div>
+        )}
+      </div>
+
+      {showInfo && (
+        <div className="bg-gray-100 border-b border-gray-300 px-4 py-2.5 flex items-start gap-2">
+          <Info className="w-4 h-4 text-gray-600 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-gray-600 flex-1">
+            Tap each line to change the pixel density. Try to choose a density that looks like 9 inch spacing.
+          </p>
+          <button onClick={() => setShowInfo(false)} className="flex-shrink-0">
+            <X className="w-4 h-4 text-gray-600" />
+          </button>
         </div>
       )}
 
@@ -200,7 +204,7 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
       <div className="p-4">
         <button
           onClick={() => onGenerate(segments)}
-          className="w-full bg-[#2B7FB8] text-white py-3 rounded-lg text-sm font-medium"
+          className="w-full bg-[#237BC0] text-white py-3 rounded-lg text-sm font-medium"
         >
           Done
         </button>

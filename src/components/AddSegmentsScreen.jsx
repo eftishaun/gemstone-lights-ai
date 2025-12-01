@@ -120,7 +120,7 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
 
   return (
     <div className="h-full flex flex-col bg-gray-50">
-      <div className="bg-[#2B7FB8] text-white px-4 py-3 flex items-center justify-between">
+      <div className="bg-[#237BC0] text-white px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button onClick={onBack}>
             <ArrowLeft className="w-5 h-5" />
@@ -134,52 +134,40 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
         )}
       </div>
 
-      {!isDrawing && segments.length === 0 && (
-        <div className="px-4 py-2.5">
-          <button
-            onClick={handleAddSegment}
-            className="w-full bg-white border border-gray-300 rounded-lg py-2.5 flex items-center justify-center gap-1.5 text-gray-700 text-sm font-normal"
-          >
-            <Plus className="w-4 h-4" />
-            Add Segment
-          </button>
-        </div>
-      )}
-
-      {!isDrawing && segments.length > 0 && (
-        <div className="px-4 py-2.5 flex gap-2">
-          <button
-            onClick={handleAddSegment}
-            className={`flex-1 bg-white border rounded-lg py-2.5 flex items-center justify-center gap-1.5 text-sm font-normal ${
-              deleteMode ? 'border-gray-300 text-gray-700' : 'border-gray-300 text-gray-700'
-            }`}
-          >
-            <Plus className="w-4 h-4" />
-            Add Segment
-          </button>
-          <button
-            onClick={handleDeleteMode}
-            className={`flex-1 bg-white border rounded-lg py-2.5 flex items-center justify-center gap-1.5 text-sm font-normal ${
-              deleteMode ? 'border-red-500 text-red-500 bg-red-50' : 'border-gray-300 text-gray-700'
-            }`}
-          >
-            <Trash2 className="w-4 h-4" />
-            Delete Segment
-          </button>
-        </div>
-      )}
-
-      {isDrawing && (
-        <div className="px-4 py-2.5">
+      <div className="px-4 py-3 bg-white border-b border-gray-200" style={{ minHeight: '60px' }}>
+        {!isDrawing ? (
+          <div className="flex gap-2">
+            <button
+              onClick={handleAddSegment}
+              className="flex-1 bg-white border border-gray-300 rounded-lg py-2.5 flex items-center justify-center gap-1.5 text-gray-700 text-sm font-normal"
+            >
+              <Plus className="w-4 h-4" />
+              Add Segment
+            </button>
+            <button
+              onClick={handleDeleteMode}
+              disabled={segments.length === 0}
+              className={`flex-1 bg-white border rounded-lg py-2.5 flex items-center justify-center gap-1.5 text-sm font-normal ${
+                deleteMode ? 'border-red-500 text-red-500 bg-red-50' : 'border-gray-300 text-gray-700'
+              } ${segments.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete Segment
+            </button>
+          </div>
+        ) : (
           <button
             onClick={handleDoneDrawing}
             disabled={currentSegment.length < 2}
-            className="w-full bg-[#2B7FB8] text-white rounded-lg py-2.5 text-sm font-medium disabled:opacity-50"
+            className="w-full bg-[#237BC0] text-white rounded-lg py-2.5 text-sm font-medium disabled:opacity-50"
           >
             Done
           </button>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Spacer to match PixelDensityScreen info banner height */}
+      <div className="bg-gray-100 border-b border-gray-300" style={{ minHeight: '44px' }} />
 
       <div className="flex-1 relative overflow-hidden">
         <div
@@ -262,7 +250,7 @@ export default function AddSegmentsScreen({ image, segments: initialSegments, on
         <button
           onClick={() => onNext(segments)}
           disabled={segments.length === 0}
-          className="w-full bg-[#2B7FB8] text-white py-3 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-[#237BC0] text-white py-3 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next
         </button>
