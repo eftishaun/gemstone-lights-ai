@@ -106,7 +106,8 @@ export default function PixelDensityScreen({ image, segments: initialSegments, o
           className="absolute inset-0"
           style={{
             backgroundImage: `url(${image})`,
-            backgroundSize: 'cover',
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center'
           }}
         >
